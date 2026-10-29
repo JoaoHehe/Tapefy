@@ -17,6 +17,8 @@ import { useBibliotecaStore } from './store/bibliotecaStore'
 import BarraPlaylists from './BarraPlaylists'
 import PaginaPlaylist from './PaginaPlaylist'
 import AdicionarPlaylist from './AdicionarPlaylist'
+import PaginaInicio from './PaginaInicio'
+import PaginaHistorico from './PaginaHistorico'
 
 
 const paginas = [
@@ -36,6 +38,8 @@ function Pagina({ titulo, texto }: { titulo: string; texto: string }): React.JSX
     </>
   )
 }
+
+const caminhosEspeciais = ['/', '/explorar', '/curtidas', '/historico']
 
 function App(): React.JSX.Element {
   const pronto = usePlayerStore((estado) => estado.pronto)
@@ -88,11 +92,13 @@ function App(): React.JSX.Element {
            <PlayerYoutube />
 
           <Routes>
+  <Route path="/" element={<PaginaInicio />} />
   <Route path="/explorar" element={<PaginaExplorar />} />
   <Route path="/curtidas" element={<PaginaCurtidas />} />
+  <Route path="/historico" element={<PaginaHistorico />} />
   <Route path="/playlist/:id" element={<PaginaPlaylist />} />
   {paginas
-    .filter((p) => p.caminho !== '/explorar' && p.caminho !== '/curtidas')
+    .filter((p) => !caminhosEspeciais.includes(p.caminho))
     .map((p) => (
       <Route
         key={p.caminho}

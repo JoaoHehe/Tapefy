@@ -5,6 +5,7 @@ type EstadoBiblioteca = {
   carregada: boolean
   curtidas: ResultadoBusca[]
   playlists: Playlist[]
+  historico: ResultadoBusca[]
   carregar: () => Promise<void>
   alternarCurtida: (musica: ResultadoBusca) => void
   criarPlaylist: (nome: string) => void
@@ -12,29 +13,36 @@ type EstadoBiblioteca = {
   excluirPlaylist: (id: string) => void
   adicionarNaPlaylist: (id: string, musica: ResultadoBusca) => boolean
   removerDaPlaylist: (id: string, idDaMusica: string) => void
+  registrarNoHistorico: (musica: ResultadoBusca) => void
+  limparHistorico: () => void
 }
 
 type DadosSalvos = {
   curtidas?: ResultadoBusca[]
   playlists?: Playlist[]
+  historico?: ResultadoBusca[]
 }
+
+const LIMITE_HISTORICO = 100
 
 export const useBibliotecaStore = create<EstadoBiblioteca>((set, get) => {
   function salvar(): void {
-    const { curtidas, playlists } = get()
-    window.api.salvarBiblioteca({ curtidas, playlists })
+    const { curtidas, playlists, historico } = get()
+    window.api.salvarBiblioteca({ curtidas, playlists, historico })
   }
 
   return {
     carregada: false,
     curtidas: [],
     playlists: [],
+    historico: [],
 
     carregar: async () => {
       const dados = (await window.api.lerBiblioteca()) as DadosSalvos | null
       set({
         curtidas: Array.isArray(dados?.curtidas) ? dados.curtidas : [],
         playlists: Array.isArray(dados?.playlists) ? dados.playlists : [],
+        historico: Array.isArray(dados?.historico) ? dados.historico : [],
         carregada: true
       })
     },
@@ -99,6 +107,19 @@ export const useBibliotecaStore = create<EstadoBiblioteca>((set, get) => {
             : item
         )
       })
+      salvar()
+    },
+
+    registrarNoHistorico: (musica) => {
+      if (!get().carregada) return
+      const semRepetida = get().historico.filter((item) => item.id !== musica.id)
+      set({ historico: [musica, ...semRepetida].slice(0, LIMITE_HISTORICO) })
+      salvar()
+    },
+
+    limparHistorico: () => {
+      if (!get().carregada) return
+      set({ historico: [] })
       salvar()
     }
   }
