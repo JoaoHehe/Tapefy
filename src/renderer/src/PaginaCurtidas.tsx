@@ -1,5 +1,6 @@
 import { useBibliotecaStore } from './store/bibliotecaStore'
 import { tocarFila } from './player/youtube'
+import BotaoFila from './BotaoFila'
 
 function PaginaCurtidas(): React.JSX.Element {
   const curtidas = useBibliotecaStore((estado) => estado.curtidas)

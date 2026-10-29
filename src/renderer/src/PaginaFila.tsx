@@ -13,7 +13,7 @@ function PaginaFila(): React.JSX.Element {
 
       {fila.length === 0 ? (
         <p className="empty">
-          A fila está vazia. Toque uma música em Explorar, Curtidas, Histórico ou numa playlist.
+          A fila está vazia. Toque uma música ou use o botão + Fila em qualquer lista pra montar a sua.
         </p>
       ) : (
         <p className="empty">

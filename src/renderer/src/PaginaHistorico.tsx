@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useBibliotecaStore } from './store/bibliotecaStore'
-import { tocarFila } from './player/youtube'
+import { tocarMusica } from './player/youtube'
+import BotaoFila from './BotaoFila'
 
 function PaginaHistorico(): React.JSX.Element {
   const historico = useBibliotecaStore((estado) => estado.historico)
@@ -39,15 +40,16 @@ function PaginaHistorico(): React.JSX.Element {
       )}
 
       <ul className="curtidas">
-        {historico.map((musica, posicao) => (
+        {historico.map((musica) => (
           <li key={musica.id}>
-            <button className="curtida-tocar" onClick={() => tocarFila(historico, posicao)}>
+            <button className="curtida-tocar" onClick={() => tocarMusica(musica)}>
               <img src={musica.miniatura} alt="" />
               <span className="resultado-texto">
                 <strong>{musica.titulo}</strong>
                 <span>{musica.canal}</span>
               </span>
             </button>
+            <BotaoFila musica={musica} />
           </li>
         ))}
       </ul>

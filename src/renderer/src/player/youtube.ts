@@ -43,24 +43,24 @@ export async function criarPlayer(caixa: HTMLElement): Promise<void> {
         estado.definirPronto(true)
       },
       onStateChange: (evento) => {
-  const estado = usePlayerStore.getState()
-  estado.definirTocando(evento.data === YT.PlayerState.PLAYING)
-  if (player) {
-    estado.definirVolume(player.getVolume())
-    estado.definirMudo(player.isMuted())
-  }
-  if (evento.data === YT.PlayerState.PLAYING) {
-    const musica = estado.fila[estado.indice]
-    const biblioteca = useBibliotecaStore.getState()
-    if (musica && biblioteca.carregada && musica.id !== ultimoRegistrado) {
-      ultimoRegistrado = musica.id
-      biblioteca.registrarNoHistorico(musica)
-    }
-  }
-  if (evento.data === YT.PlayerState.ENDED) {
-    avancar(true)
-  }
-},
+        const estado = usePlayerStore.getState()
+        estado.definirTocando(evento.data === YT.PlayerState.PLAYING)
+        if (player) {
+          estado.definirVolume(player.getVolume())
+          estado.definirMudo(player.isMuted())
+        }
+        if (evento.data === YT.PlayerState.PLAYING) {
+          const musica = estado.fila[estado.indice]
+          const biblioteca = useBibliotecaStore.getState()
+          if (musica && biblioteca.carregada && musica.id !== ultimoRegistrado) {
+            ultimoRegistrado = musica.id
+            biblioteca.registrarNoHistorico(musica)
+          }
+        }
+        if (evento.data === YT.PlayerState.ENDED) {
+          avancar(true)
+        }
+      },
       onError: () => {
         avancar(false)
         usePlayerStore.getState().definirAviso('Esse vídeo não pode ser tocado aqui.')
@@ -225,4 +225,21 @@ export function removerDaFila(posicao: number): void {
   if (posicao === estado.indice) return
   historico = []
   estado.removerDaFila(posicao)
+}
+
+export function tocarMusica(musica: ResultadoBusca): void {
+  tocarFila([musica], 0)
+}
+
+export function adicionarNaFila(musica: ResultadoBusca): 'tocando' | 'adicionada' | 'repetida' {
+  const estado = usePlayerStore.getState()
+  if (estado.fila.length === 0) {
+    tocarFila([musica], 0)
+    return 'tocando'
+  }
+  if (estado.fila.some((item) => item.id === musica.id)) {
+    return 'repetida'
+  }
+  estado.adicionarNaFila(musica)
+  return 'adicionada'
 }

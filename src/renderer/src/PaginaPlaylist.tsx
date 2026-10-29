@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useBibliotecaStore } from './store/bibliotecaStore'
 import { tocarFila } from './player/youtube'
+import BotaoFila from './BotaoFila'
 
 function DetalhePlaylist({ id }: { id: string }): React.JSX.Element {
   const navigate = useNavigate()

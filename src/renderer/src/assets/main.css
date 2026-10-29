@@ -1,4 +1,3 @@
-/* cores todas aqui, mexeu aqui mudou o app inteiro */
 :root {
   --cor-fundo: #121212;
   --cor-lateral: #0a0a0a;
@@ -501,4 +500,50 @@ input:focus-visible {
   padding: 0 8px;
   font-size: 12px;
   color: var(--cor-destaque);
+}
+
+button.botao-pequeno {
+  display: inline-block;
+  width: auto;
+  padding: 6px 10px;
+  border: 1px solid var(--cor-texto-suave);
+  border-radius: 6px;
+  background: var(--cor-player);
+  color: var(--cor-texto);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+button.botao-pequeno:hover:not(:disabled) {
+  border-color: var(--cor-destaque);
+}
+
+button.botao-pequeno:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resultados li > button.botao-pequeno {
+  flex: none;
+}
+
+.atalhos {
+  margin-top: 16px;
+  border-collapse: collapse;
+}
+
+.atalhos th,
+.atalhos td {
+  padding: 8px 24px 8px 0;
+  text-align: left;
+  font-weight: normal;
+}
+
+.atalhos kbd {
+  padding: 2px 8px;
+  border: 1px solid var(--cor-texto-suave);
+  border-radius: 4px;
+  background: var(--cor-player);
+  font-family: inherit;
+  font-size: 13px;
 }

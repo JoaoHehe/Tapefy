@@ -20,6 +20,8 @@ import AdicionarPlaylist from './AdicionarPlaylist'
 import PaginaInicio from './PaginaInicio'
 import PaginaHistorico from './PaginaHistorico'
 import PaginaFila from './PaginaFila'
+import PaginaConfiguracoes from './PaginaConfiguracoes'
+import { useAtalhos } from './useAtalhos'
 
 
 const paginas = [
@@ -41,7 +43,7 @@ function Pagina({ titulo, texto }: { titulo: string; texto: string }): React.JSX
   )
 }
 
-const caminhosEspeciais = ['/', '/explorar', '/fila', '/curtidas', '/historico']
+const caminhosEspeciais = ['/', '/explorar', '/fila', '/curtidas', '/historico', '/configuracoes']
 
 function App(): React.JSX.Element {
   const pronto = usePlayerStore((estado) => estado.pronto)
@@ -58,7 +60,7 @@ function App(): React.JSX.Element {
   useEffect(() => {
   useBibliotecaStore.getState().carregar()
   }, [])
-  
+  useAtalhos()
   
   const repetir = usePlayerStore((estado) => estado.repetir)
   const aleatorio = usePlayerStore((estado) => estado.aleatorio)
@@ -100,6 +102,7 @@ function App(): React.JSX.Element {
   <Route path="/historico" element={<PaginaHistorico />} />
   <Route path="/playlist/:id" element={<PaginaPlaylist />} />
   <Route path="/fila" element={<PaginaFila />} />
+  <Route path="/configuracoes" element={<PaginaConfiguracoes />} />
   {paginas
     .filter((p) => !caminhosEspeciais.includes(p.caminho))
     .map((p) => (

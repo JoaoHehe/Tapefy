@@ -23,6 +23,7 @@ type EstadoDoPlayer = {
   definirRepetir: (modo: ModoRepetir) => void
   definirAleatorio: (valor: boolean) => void
   removerDaFila: (posicao: number) => void
+  adicionarNaFila: (musica: ResultadoBusca) => void
 }
 
 export const usePlayerStore = create<EstadoDoPlayer>((set) => ({
@@ -53,5 +54,6 @@ export const usePlayerStore = create<EstadoDoPlayer>((set) => ({
         fila: estado.fila.filter((_, i) => i !== posicao),
         indice: posicao < estado.indice ? estado.indice - 1 : estado.indice
       }
-    })
+    }),
+  adicionarNaFila: (musica) => set((estado) => ({ fila: [...estado.fila, musica] }))
 }))

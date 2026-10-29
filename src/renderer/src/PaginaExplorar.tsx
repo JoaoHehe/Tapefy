@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import type { ResultadoBusca } from './tipos'
-import { tocarFila } from './player/youtube'
+import { tocarMusica } from './player/youtube'
 import AdicionarPlaylist from './AdicionarPlaylist'
+import BotaoFila from './BotaoFila'
 
 function PaginaExplorar(): React.JSX.Element {
   const [termo, setTermo] = useState('')
@@ -60,18 +61,19 @@ function PaginaExplorar(): React.JSX.Element {
       {!jaBuscou && <p className="empty">Digite algo e aperta Enter.</p>}
 
       <ul className="resultados">
-        {resultados.map((resultado, posicao) => (
-  <li key={resultado.id}>
-    <button onClick={() => tocarFila(resultados, posicao)}>
-      <img src={resultado.miniatura} alt="" />
-      <span className="resultado-texto">
-        <strong>{resultado.titulo}</strong>
-        <span>{resultado.canal}</span>
-      </span>
-    </button>
-    <AdicionarPlaylist musica={resultado} />
-  </li>
-))}
+        {resultados.map((resultado) => (
+          <li key={resultado.id}>
+            <button onClick={() => tocarMusica(resultado)}>
+              <img src={resultado.miniatura} alt="" />
+              <span className="resultado-texto">
+                <strong>{resultado.titulo}</strong>
+                <span>{resultado.canal}</span>
+              </span>
+            </button>
+            <BotaoFila musica={resultado} />
+            <AdicionarPlaylist musica={resultado} />
+          </li>
+        ))}
       </ul>
     </>
   )
