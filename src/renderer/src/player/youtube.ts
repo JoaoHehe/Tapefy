@@ -34,8 +34,8 @@ export async function criarPlayer(caixa: HTMLElement): Promise<void> {
   caixa.appendChild(alvo)
 
   player = new YT.Player(alvo, {
-    width: '480',
-    height: '270',
+    width: '0',
+    height: '0',
     events: {
       onReady: () => {
         const estado = usePlayerStore.getState()
@@ -214,4 +214,15 @@ export function alternarAleatorio(): void {
   const estado = usePlayerStore.getState()
   historico = []
   estado.definirAleatorio(!estado.aleatorio)
+}
+
+export function tocarDaFila(indice: number): void {
+  irPara(indice)
+}
+
+export function removerDaFila(posicao: number): void {
+  const estado = usePlayerStore.getState()
+  if (posicao === estado.indice) return
+  historico = []
+  estado.removerDaFila(posicao)
 }

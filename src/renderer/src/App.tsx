@@ -19,11 +19,13 @@ import PaginaPlaylist from './PaginaPlaylist'
 import AdicionarPlaylist from './AdicionarPlaylist'
 import PaginaInicio from './PaginaInicio'
 import PaginaHistorico from './PaginaHistorico'
+import PaginaFila from './PaginaFila'
 
 
 const paginas = [
   { caminho: '/', nome: 'Início', texto: 'Você ainda não ouviu porra nenhuma. A busca vai ficar aqui em breve!' },
   { caminho: '/explorar', nome: 'Explorar', texto: 'Aqui vai ficar a busca de músicas.' },
+  { caminho: '/fila', nome: 'Fila', texto: '' },
   { caminho: '/biblioteca', nome: 'Minha biblioteca', texto: 'Suas playlists vão aparecer aqui.' },
   { caminho: '/curtidas', nome: 'Músicas curtidas', texto: 'Curtiu uma música? Ela cai aqui.' },
   { caminho: '/historico', nome: 'Histórico', texto: 'Nada tocado ainda.' },
@@ -39,7 +41,7 @@ function Pagina({ titulo, texto }: { titulo: string; texto: string }): React.JSX
   )
 }
 
-const caminhosEspeciais = ['/', '/explorar', '/curtidas', '/historico']
+const caminhosEspeciais = ['/', '/explorar', '/fila', '/curtidas', '/historico']
 
 function App(): React.JSX.Element {
   const pronto = usePlayerStore((estado) => estado.pronto)
@@ -97,6 +99,7 @@ function App(): React.JSX.Element {
   <Route path="/curtidas" element={<PaginaCurtidas />} />
   <Route path="/historico" element={<PaginaHistorico />} />
   <Route path="/playlist/:id" element={<PaginaPlaylist />} />
+  <Route path="/fila" element={<PaginaFila />} />
   {paginas
     .filter((p) => !caminhosEspeciais.includes(p.caminho))
     .map((p) => (
@@ -178,7 +181,13 @@ function App(): React.JSX.Element {
   <BarraProgresso />
 </div>
 
+  <div className="player-direita">
+  <NavLink className="botao-fila" to="/fila" aria-label="Abrir a fila de reprodução">
+    ☰
+  </NavLink>
   <ControleVolume />
+</div>
+
 </footer>
       </div>
     </HashRouter>

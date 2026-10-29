@@ -22,6 +22,7 @@ type EstadoDoPlayer = {
   definirMudo: (valor: boolean) => void
   definirRepetir: (modo: ModoRepetir) => void
   definirAleatorio: (valor: boolean) => void
+  removerDaFila: (posicao: number) => void
 }
 
 export const usePlayerStore = create<EstadoDoPlayer>((set) => ({
@@ -42,5 +43,15 @@ export const usePlayerStore = create<EstadoDoPlayer>((set) => ({
   definirVolume: (valor) => set({ volume: valor }),
   definirMudo: (valor) => set({ mudo: valor }),
   definirRepetir: (modo) => set({ repetir: modo }),
-  definirAleatorio: (valor) => set({ aleatorio: valor })
+  definirAleatorio: (valor) => set({ aleatorio: valor }),
+  removerDaFila: (posicao) =>
+    set((estado) => {
+      if (posicao < 0 || posicao >= estado.fila.length || posicao === estado.indice) {
+        return estado
+      }
+      return {
+        fila: estado.fila.filter((_, i) => i !== posicao),
+        indice: posicao < estado.indice ? estado.indice - 1 : estado.indice
+      }
+    })
 }))

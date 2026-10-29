@@ -463,3 +463,42 @@ input:focus-visible {
   text-transform: uppercase;
   color: var(--cor-texto-suave);
 }
+
+.player-direita {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.botao-fila {
+  color: var(--cor-texto-suave);
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.botao-fila:hover,
+.botao-fila.active {
+  color: var(--cor-destaque);
+}
+
+.fila-posicao {
+  width: 28px;
+  text-align: right;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.fila-atual .fila-posicao {
+  color: var(--cor-destaque);
+}
+
+.fila-atual .curtida-tocar {
+  background: var(--cor-player);
+}
+
+.fila-selo {
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--cor-destaque);
+}
