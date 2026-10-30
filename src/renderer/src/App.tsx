@@ -25,6 +25,7 @@ import PaginaConfiguracoes from './PaginaConfiguracoes'
 import PainelTocando from './PainelTocando'
 import { useAtalhos } from './useAtalhos'
 import { useOnline } from './useOnline'
+import PaginaBiblioteca from './PaginaBiblioteca'
 
 const paginas = [
   { caminho: '/', nome: 'Início', texto: 'Você ainda não ouviu porra nenhuma. A busca vai ficar aqui em breve!' },
@@ -36,7 +37,15 @@ const paginas = [
   { caminho: '/configuracoes', nome: 'Configurações', texto: 'Nada pra configurar ainda, e não vou inventar opção de enfeite.' }
 ]
 
-const caminhosEspeciais = ['/', '/explorar', '/fila', '/curtidas', '/historico', '/configuracoes']
+const caminhosEspeciais = [
+  '/',
+  '/explorar',
+  '/fila',
+  '/biblioteca',
+  '/curtidas',
+  '/historico',
+  '/configuracoes'
+]
 
 function Pagina({ titulo, texto }: { titulo: string; texto: string }): React.JSX.Element {
   return (
@@ -115,6 +124,7 @@ function App(): React.JSX.Element {
             <Route path="/playlist/:id" element={<PaginaPlaylist />} />
             <Route path="/fila" element={<PaginaFila />} />
             <Route path="/configuracoes" element={<PaginaConfiguracoes />} />
+            <Route path="/biblioteca" element={<PaginaBiblioteca />} />
             {paginas
               .filter((p) => !caminhosEspeciais.includes(p.caminho))
               .map((p) => (

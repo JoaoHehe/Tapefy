@@ -643,3 +643,57 @@ button.botao-pequeno:disabled {
   gap: 12px;
   margin-top: 12px;
 }
+
+.cartoes {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.cartoes a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--cor-player);
+  color: var(--cor-texto);
+  text-decoration: none;
+}
+
+.cartoes a:hover {
+  border-color: var(--cor-destaque);
+}
+
+.cartao-capa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  background: var(--cor-lateral);
+  font-size: 24px;
+  object-fit: cover;
+}
+
+.cartao-texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cartao-texto strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cartao-texto span {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}

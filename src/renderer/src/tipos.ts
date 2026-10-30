@@ -3,6 +3,7 @@ export type ResultadoBusca = {
   titulo: string
   canal: string
   miniatura: string
+  duracao?: number
 }
 
 export type Playlist = {

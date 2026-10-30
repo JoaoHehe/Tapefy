@@ -5,6 +5,7 @@ type ResultadoBusca = {
   titulo: string
   canal: string
   miniatura: string
+  duracao?: number
 }
 
 declare global {
