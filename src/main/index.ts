@@ -3,7 +3,12 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { app, shell, BrowserWindow, ipcMain, session } from 'electron'
 import { buscarMusicas } from './busca'
-import { lerBiblioteca, salvarBiblioteca } from './armazenamento'
+import {
+  lerBiblioteca,
+  salvarBiblioteca,
+  lerEstadoDoPlayer,
+  salvarEstadoDoPlayer
+} from './armazenamento'
 
 const ORIGEM_DO_APP = 'https://meu-player.example.com'
 
@@ -40,15 +45,15 @@ function createWindow(): void {
 
 
 app.whenReady().then(() => {
-  
-  
-session.defaultSession.webRequest.onBeforeSendHeaders(
-  { urls: ['https://www.youtube.com/*'] },
-  (details, callback) => {
-    details.requestHeaders['Referer'] = ORIGEM_DO_APP
-    callback({ requestHeaders: details.requestHeaders })
-  }
-)
+
+
+  session.defaultSession.webRequest.onBeforeSendHeaders(
+    { urls: ['https://www.youtube.com/*'] },
+    (details, callback) => {
+      details.requestHeaders['Referer'] = ORIGEM_DO_APP
+      callback({ requestHeaders: details.requestHeaders })
+    }
+  )
 
   electronApp.setAppUserModelId('com.electron')
 
@@ -60,8 +65,11 @@ session.defaultSession.webRequest.onBeforeSendHeaders(
   ipcMain.handle('buscar-musicas', (_evento, termo: string) => buscarMusicas(termo))
 
   ipcMain.handle('biblioteca-ler', () => lerBiblioteca())
-  
+
   ipcMain.handle('biblioteca-salvar', (_evento, dados: unknown) => salvarBiblioteca(dados))
+
+  ipcMain.handle('player-ler', () => lerEstadoDoPlayer())
+  ipcMain.handle('player-salvar', (_evento, dados: unknown) => salvarEstadoDoPlayer(dados))
 
   ipcMain.on('ping', () => console.log('pong'))
 

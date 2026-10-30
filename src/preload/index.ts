@@ -4,7 +4,9 @@ import { contextBridge, ipcRenderer } from 'electron'
 const api = {
   buscarMusicas: (termo: string) => ipcRenderer.invoke('buscar-musicas', termo),
   lerBiblioteca: () => ipcRenderer.invoke('biblioteca-ler'),
-  salvarBiblioteca: (dados: unknown) => ipcRenderer.invoke('biblioteca-salvar', dados)
+  salvarBiblioteca: (dados: unknown) => ipcRenderer.invoke('biblioteca-salvar', dados),
+  lerEstadoDoPlayer: () => ipcRenderer.invoke('player-ler'),
+  salvarEstadoDoPlayer: (dados: unknown) => ipcRenderer.invoke('player-salvar', dados)
 }
 
 

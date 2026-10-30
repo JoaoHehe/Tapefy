@@ -1,6 +1,7 @@
 import { usePlayerStore } from '../store/playerStore'
-import type { ResultadoBusca } from '../tipos'
+import type { ModoRepetir } from '../store/playerStore'
 import { useBibliotecaStore } from '../store/bibliotecaStore'
+import type { ResultadoBusca } from '../tipos'
 
 declare global {
   interface Window {
@@ -8,18 +9,36 @@ declare global {
   }
 }
 
+type EstadoSalvo = {
+  fila?: unknown
+  indice?: unknown
+  volume?: unknown
+  repetir?: unknown
+  aleatorio?: unknown
+}
+
 let player: YT.Player | null = null
 let criando = false
 let apiPronta: Promise<void> | null = null
 let historico: number[] = []
 let ultimoRegistrado = ''
+let restaurando = false
+let restauracaoIniciada = false
+let persistenciaAtiva = false
+let ultimoSalvo = ''
+let temporizador: ReturnType<typeof setTimeout> | undefined
 
 function carregarApi(): Promise<void> {
   if (apiPronta) return apiPronta
-  apiPronta = new Promise((resolve) => {
+  apiPronta = new Promise((resolve, reject) => {
     window.onYouTubeIframeAPIReady = () => resolve()
     const script = document.createElement('script')
     script.src = 'https://www.youtube.com/iframe_api'
+    script.onerror = () => {
+      script.remove()
+      apiPronta = null
+      reject(new Error('Falha ao carregar a API do YouTube'))
+    }
     document.head.appendChild(script)
   })
   return apiPronta
@@ -28,19 +47,28 @@ function carregarApi(): Promise<void> {
 export async function criarPlayer(caixa: HTMLElement): Promise<void> {
   if (player || criando) return
   criando = true
-  await carregarApi()
+
+  try {
+    await carregarApi()
+  } catch {
+    criando = false
+    return
+  }
 
   const alvo = document.createElement('div')
   caixa.appendChild(alvo)
 
   player = new YT.Player(alvo, {
     width: '0',
-    height: '0',
+    height: '',
     events: {
       onReady: () => {
         const estado = usePlayerStore.getState()
         player?.setVolume(estado.volume)
         estado.definirPronto(true)
+        if (persistenciaAtiva) {
+          prepararMusicaSalva()
+        }
       },
       onStateChange: (evento) => {
         const estado = usePlayerStore.getState()
@@ -48,6 +76,9 @@ export async function criarPlayer(caixa: HTMLElement): Promise<void> {
         if (player) {
           estado.definirVolume(player.getVolume())
           estado.definirMudo(player.isMuted())
+        }
+        if (evento.data === YT.PlayerState.PLAYING || evento.data === YT.PlayerState.CUED) {
+          restaurando = false
         }
         if (evento.data === YT.PlayerState.PLAYING) {
           const musica = estado.fila[estado.indice]
@@ -62,11 +93,99 @@ export async function criarPlayer(caixa: HTMLElement): Promise<void> {
         }
       },
       onError: () => {
+        if (restaurando) {
+          restaurando = false
+          usePlayerStore.getState().definirAviso('A última música não está mais disponível.')
+          return
+        }
         avancar(false)
         usePlayerStore.getState().definirAviso('Esse vídeo não pode ser tocado aqui.')
       }
     }
   })
+}
+
+function musicaValida(item: unknown): item is ResultadoBusca {
+  if (typeof item !== 'object' || item === null) return false
+  const musica = item as Record<string, unknown>
+  return (
+    typeof musica.id === 'string' &&
+    typeof musica.titulo === 'string' &&
+    typeof musica.canal === 'string' &&
+    typeof musica.miniatura === 'string'
+  )
+}
+
+function dadosParaSalvar(): object {
+  const { fila, indice, volume, repetir, aleatorio } = usePlayerStore.getState()
+  return { fila, indice, volume, repetir, aleatorio }
+}
+
+function agendarSalvamento(): void {
+  if (!persistenciaAtiva) return
+  if (JSON.stringify(dadosParaSalvar()) === ultimoSalvo) return
+  clearTimeout(temporizador)
+  temporizador = setTimeout(() => {
+    const dados = dadosParaSalvar()
+    const texto = JSON.stringify(dados)
+    if (texto === ultimoSalvo) return
+    ultimoSalvo = texto
+    window.api.salvarEstadoDoPlayer(dados)
+  }, 500)
+}
+
+function prepararMusicaSalva(): void {
+  const { fila, indice } = usePlayerStore.getState()
+  const musica = fila[indice]
+  if (!player || !musica) return
+  restaurando = true
+  player.cueVideoById(musica.id)
+}
+
+export async function restaurarEstado(): Promise<void> {
+  if (restauracaoIniciada) return
+  restauracaoIniciada = true
+
+  const salvo = (await window.api.lerEstadoDoPlayer()) as EstadoSalvo | null
+
+  if (salvo && usePlayerStore.getState().fila.length === 0) {
+    const lista: unknown[] = Array.isArray(salvo.fila) ? salvo.fila : []
+    const fila = lista.every(musicaValida) ? (lista as ResultadoBusca[]) : []
+    const indice =
+      typeof salvo.indice === 'number' &&
+      Number.isInteger(salvo.indice) &&
+      salvo.indice >= 0 &&
+      salvo.indice < fila.length
+        ? salvo.indice
+        : -1
+    const volume =
+      typeof salvo.volume === 'number' && salvo.volume >= 0 && salvo.volume <= 100
+        ? salvo.volume
+        : 100
+    const repetir: ModoRepetir =
+      salvo.repetir === 'fila' || salvo.repetir === 'uma' ? salvo.repetir : 'desligado'
+    const aleatorio = salvo.aleatorio === true
+
+    usePlayerStore.setState({
+      fila: indice >= 0 ? fila : [],
+      indice,
+      volume,
+      repetir,
+      aleatorio
+    })
+
+    if (player && usePlayerStore.getState().pronto) {
+      player.setVolume(volume)
+    }
+  }
+
+  ultimoSalvo = JSON.stringify(dadosParaSalvar())
+  usePlayerStore.subscribe(agendarSalvamento)
+  persistenciaAtiva = true
+
+  if (usePlayerStore.getState().pronto) {
+    prepararMusicaSalva()
+  }
 }
 
 function irPara(indice: number): void {
@@ -155,6 +274,34 @@ export function tocarFila(lista: ResultadoBusca[], indice: number): void {
   player.loadVideoById(lista[indice].id)
 }
 
+export function tocarMusica(musica: ResultadoBusca): void {
+  tocarFila([musica], 0)
+}
+
+export function adicionarNaFila(musica: ResultadoBusca): 'tocando' | 'adicionada' | 'repetida' {
+  const estado = usePlayerStore.getState()
+  if (estado.fila.length === 0) {
+    tocarFila([musica], 0)
+    return 'tocando'
+  }
+  if (estado.fila.some((item) => item.id === musica.id)) {
+    return 'repetida'
+  }
+  estado.adicionarNaFila(musica)
+  return 'adicionada'
+}
+
+export function tocarDaFila(indice: number): void {
+  irPara(indice)
+}
+
+export function removerDaFila(posicao: number): void {
+  const estado = usePlayerStore.getState()
+  if (posicao === estado.indice) return
+  historico = []
+  estado.removerDaFila(posicao)
+}
+
 export function tocarOuPausar(): void {
   if (!player) return
   if (player.getPlayerState() === YT.PlayerState.PLAYING) {
@@ -214,32 +361,4 @@ export function alternarAleatorio(): void {
   const estado = usePlayerStore.getState()
   historico = []
   estado.definirAleatorio(!estado.aleatorio)
-}
-
-export function tocarDaFila(indice: number): void {
-  irPara(indice)
-}
-
-export function removerDaFila(posicao: number): void {
-  const estado = usePlayerStore.getState()
-  if (posicao === estado.indice) return
-  historico = []
-  estado.removerDaFila(posicao)
-}
-
-export function tocarMusica(musica: ResultadoBusca): void {
-  tocarFila([musica], 0)
-}
-
-export function adicionarNaFila(musica: ResultadoBusca): 'tocando' | 'adicionada' | 'repetida' {
-  const estado = usePlayerStore.getState()
-  if (estado.fila.length === 0) {
-    tocarFila([musica], 0)
-    return 'tocando'
-  }
-  if (estado.fila.some((item) => item.id === musica.id)) {
-    return 'repetida'
-  }
-  estado.adicionarNaFila(musica)
-  return 'adicionada'
 }

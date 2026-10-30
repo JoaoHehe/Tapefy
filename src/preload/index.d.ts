@@ -14,6 +14,8 @@ declare global {
       buscarMusicas: (termo: string) => Promise<ResultadoBusca[]>
       lerBiblioteca: () => Promise<unknown>
       salvarBiblioteca: (dados: unknown) => Promise<void>
+      lerEstadoDoPlayer: () => Promise<unknown>
+      salvarEstadoDoPlayer: (dados: unknown) => Promise<void>
     }
   }
 }

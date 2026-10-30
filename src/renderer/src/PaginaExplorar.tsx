@@ -15,6 +15,11 @@ function PaginaExplorar(): React.JSX.Element {
     const texto = termo.trim()
     if (!texto) return
 
+    if (!navigator.onLine) {
+      setErro('Sem internet. A busca só funciona com conexão.')
+      return
+    }
+
     setCarregando(true)
     setErro('')
 
