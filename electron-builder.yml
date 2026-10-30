@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: meu-player
+appId: com.orbital.audio.systems
+productName: Orbital Audio Systems
 directories:
   buildResources: build
 files:
@@ -12,13 +12,15 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: meu-player
+  icon: build/icon.ico
+  executableName: orbital-audio-systems
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
+  icon: build/icon.icns
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -29,11 +31,12 @@ mac:
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
+  icon: build/icon.png
   target:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: Orbital Audio Systems
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}

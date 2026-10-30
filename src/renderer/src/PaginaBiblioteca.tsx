@@ -6,8 +6,6 @@ function contar(quantidade: number): string {
 }
 
 function PaginaBiblioteca(): React.JSX.Element {
-  const curtidas = useBibliotecaStore((estado) => estado.curtidas)
-  const historico = useBibliotecaStore((estado) => estado.historico)
   const playlists = useBibliotecaStore((estado) => estado.playlists)
   const carregada = useBibliotecaStore((estado) => estado.carregada)
 
@@ -19,31 +17,6 @@ function PaginaBiblioteca(): React.JSX.Element {
 
       {carregada && (
         <>
-          <ul className="cartoes">
-            <li>
-              <NavLink to="/curtidas">
-                <span className="cartao-capa" aria-hidden="true">
-                  ♥
-                </span>
-                <span className="cartao-texto">
-                  <strong>Músicas curtidas</strong>
-                  <span>{contar(curtidas.length)}</span>
-                </span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/historico">
-                <span className="cartao-capa" aria-hidden="true">
-                  ↺
-                </span>
-                <span className="cartao-texto">
-                  <strong>Histórico</strong>
-                  <span>{contar(historico.length)}</span>
-                </span>
-              </NavLink>
-            </li>
-          </ul>
-
           <h3>Playlists</h3>
 
           {playlists.length === 0 ? (

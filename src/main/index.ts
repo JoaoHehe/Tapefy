@@ -19,7 +19,9 @@ function createWindow(): void {
     height: 670,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    title: 'Orbital Audio Systems',
+    // Use the Orbital brand icon on Windows, macOS and Linux window chrome/taskbar.
+    icon,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -55,7 +57,7 @@ app.whenReady().then(() => {
     }
   )
 
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.orbital.audio.systems')
 
 
   app.on('browser-window-created', (_, window) => {

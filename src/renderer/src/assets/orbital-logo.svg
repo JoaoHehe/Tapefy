@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 250" fill="none">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0c36b"/><stop offset="1" stop-color="#c78a3b"/></linearGradient>
+  </defs>
+  <g stroke="url(#gold)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    <ellipse cx="126" cy="125" rx="112" ry="39" transform="rotate(-28 126 125)"/>
+    <ellipse cx="126" cy="125" rx="76" ry="105" transform="rotate(22 126 125)" opacity=".82"/>
+    <path d="m35 161 22-13M198 69l23-14"/>
+    <path d="m126 91 10 24 24 10-24 10-10 24-10-24-24-10 24-10z" fill="url(#gold)" stroke="none"/>
+    <circle cx="199" cy="68" r="7" fill="url(#gold)" stroke="none"/>
+    <circle cx="50" cy="158" r="6" fill="url(#gold)" stroke="none"/>
+  </g>
+  <path d="M270 35v180" stroke="#d9a441" stroke-width="2" opacity=".7"/>
+  <g fill="url(#gold)" filter="url(#glow)" font-family="Arial, Helvetica, sans-serif">
+    <text x="310" y="132" font-size="91" font-weight="500" letter-spacing="17">ORBITAL</text>
+    <text x="315" y="183" font-size="29" font-weight="400" letter-spacing="15">AUDIO SYSTEMS</text>
+  </g>
+</svg>

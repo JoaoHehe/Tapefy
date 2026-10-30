@@ -71,8 +71,11 @@ function PaginaExplorar(): React.JSX.Element {
   }, [termo, buscar])
 
   return (
-    <>
-      <h2>Explorar</h2>
+    <section className="explorar-orbital">
+      <header className="explorar-cabecalho">
+        <h2>Explorar</h2>
+        <p>Encontre sua próxima frequência.</p>
+      </header>
 
       <form
         className="busca"
@@ -122,7 +125,7 @@ function PaginaExplorar(): React.JSX.Element {
           </li>
         ))}
       </ul>
-    </>
+    </section>
   )
 }
 

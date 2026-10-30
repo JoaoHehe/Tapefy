@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import orbitalLogo from './assets/orbital-logo.svg'
 import { HashRouter, NavLink, Route, Routes } from 'react-router-dom'
 import PlayerYoutube from './PlayerYoutube'
 import { usePlayerStore } from './store/playerStore'
@@ -31,7 +32,7 @@ const paginas = [
   { caminho: '/', nome: 'Início', texto: 'Você ainda não ouviu porra nenhuma. A busca vai ficar aqui em breve!' },
   { caminho: '/explorar', nome: 'Explorar', texto: 'Aqui vai ficar a busca de músicas.' },
   { caminho: '/fila', nome: 'Fila', texto: '' },
-  { caminho: '/biblioteca', nome: 'Minha biblioteca', texto: 'Suas playlists vão aparecer aqui.' },
+  { caminho: '/biblioteca', nome: 'Arquivo de mídia', texto: 'Suas playlists vão aparecer aqui.' },
   { caminho: '/curtidas', nome: 'Músicas curtidas', texto: 'Curtiu uma música? Ela cai aqui.' },
   { caminho: '/historico', nome: 'Histórico', texto: 'Nada tocado ainda.' },
   { caminho: '/configuracoes', nome: 'Configurações', texto: 'Nada pra configurar ainda, e não vou inventar opção de enfeite.' }
@@ -72,6 +73,12 @@ function App(): React.JSX.Element {
   const curtida = musicaAtual ? curtidas.some((item) => item.id === musicaAtual.id) : false
 
   const [painelAberto, setPainelAberto] = useState(false)
+  const [inicializando, setInicializando] = useState(true)
+
+  useEffect(() => {
+    const inicio = window.setTimeout(() => setInicializando(false), 2350)
+    return () => window.clearTimeout(inicio)
+  }, [])
 
   useEffect(() => {
     useBibliotecaStore.getState().carregar()
@@ -88,8 +95,18 @@ function App(): React.JSX.Element {
   return (
     <HashRouter>
       <div className={painelAberto ? 'app com-painel' : 'app'}>
+        {inicializando && (
+          <div className="orbital-splash" role="status" aria-label="Iniciando Orbital Audio Systems">
+            <div className="orbital-splash-grid" />
+            <img src={orbitalLogo} alt="Orbital Audio Systems" />
+            <span className="splash-status"><i /> INICIALIZANDO SISTEMAS DE ÁUDIO</span>
+            <div className="splash-progress"><span /></div>
+          </div>
+        )}
         <aside className="sidebar">
-          <h1 className="logo">Tapefy</h1>
+          <div className="brand-lockup" aria-label="Orbital Audio Systems">
+            <img className="brand-lockup-logo" src={orbitalLogo} alt="Orbital Audio Systems" />
+          </div>
 
           <nav aria-label="Navegação principal">
             <ul>
@@ -177,6 +194,9 @@ function App(): React.JSX.Element {
           </div>
 
           <div className="player-centro">
+            <div className={tocando ? 'audio-visualizer ativo' : 'audio-visualizer'} aria-hidden="true">
+              {Array.from({ length:  30 }, (_, i) => <i key={i} style={{ animationDelay: `${i * -0.075}s` }} />)}
+            </div>
             <div className="player-controls">
               <button
                 disabled={!pronto}
